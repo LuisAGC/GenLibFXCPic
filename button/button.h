@@ -11,13 +11,14 @@ extern "C" {
     // Forward declaration of the struct type
     typedef struct ButtonStruct Button;
     
-    // typedefs for struct function pointers
+    // Typedefs for struct function pointers
+	// State machine current state function type declaration
     typedef void (*ButtonStateFn)(Button *me);
     typedef bool (*ButtonPhyStateFn)(void);
     typedef void (*ButtonPressFn)(void);
     typedef void (*ButtonReleaseFn)(void);
     
-    // Definition of the struct
+    // Definition of the Button struct
     struct ButtonStruct {
         ButtonPhyStateFn getButtonPhysicalStateCallbackFn;
         ButtonStateFn currentStateFn;
@@ -29,7 +30,8 @@ extern "C" {
         uint16_t longPressTicks;
     };
     
-    // State machine/Lifecycle function forward declarations, never to be called outside
+    // State machine/Lifecycle function forward declarations
+	// Should not be called outside of the state machine lifecycle
     
     /**
     *  
