@@ -87,8 +87,8 @@ extern "C" {
     /**
     * 
     * This function will set currentTicks back to 0 then execute the callback set 
-    * to buttonReleasedCallbackFN and finally change currentStateFn to Button_Reset
-    * only if the button was already released, otherwise it will do nothing
+    * to buttonReleasedCallbackFn and finally change currentStateFn to Button_Idle
+    * only if the button is already released, otherwise it will do nothing
     * 
     */
     void Button_Reset(Button *me);
