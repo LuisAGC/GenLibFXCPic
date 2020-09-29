@@ -27,13 +27,13 @@ extern "C" {
         ATCommandErrorCallbackFn errorCallbackFn;
         ATCommand *parsedCommand;
         ATCharacter buffer[AT_BYTES_BUFFER_MAX_SIZE];
-        ATCharacter bufferIndex;
+        uint8_t bufferIndex;
     };
 
     struct ATCommandStruct {
         uint8_t commandIndex;
         uint8_t modifierIndex;
-        uint16_t data[AT_DATA_MAX_SIZE];
+        int16_t data[AT_DATA_MAX_SIZE];
         uint8_t dataIndex;
     };
 
@@ -46,6 +46,8 @@ extern "C" {
     void AT_CommandModifierParse(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_DataParse(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_DataParseNumber(ATCommandParser *me, ATCharacter currentCharacter);
+    void AT_DataParseNegativeNumber(ATCommandParser *me, ATCharacter currentCharacter);
+    void AT_DataParseNegativeNumberStaging(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_Error(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_Reset(ATCommandParser *me, ATCharacter currentCharacter);
 

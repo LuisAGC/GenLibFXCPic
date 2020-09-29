@@ -31,6 +31,8 @@ void AT_CleanBuffer(ATCommandParser *me){
     }
 }
 
+void AT_DataParseNumberHelper(ATCommandParser *me, ATCharacter currentCharacter, bool negative);
+
 void AT_CleanCommand(ATCommand *command){
     command->commandIndex = 0;
     command->dataIndex = 0;
@@ -57,7 +59,7 @@ void AT_InitialParse(ATCommandParser *me, ATCharacter currentCharacter){
     me->bufferIndex++;
     if(me->bufferIndex == 3){
         uint32_t hashValue = AT_Hash(me->buffer);
-        if(AT_Hash(me->buffer) == AT_Initial){
+        if(hashValue == AT_Initial){
             AT_CleanBuffer(me);
             me->currentState = AT_CommandParse;
         }
@@ -110,8 +112,11 @@ void AT_DataParse(ATCommandParser *me, ATCharacter currentCharacter){
         else{
             me->currentState = AT_DataParseNumber;
         }
+    }
+    else if(currentCharacter == '-'){
+        me->currentState = AT_DataParseNegativeNumberStaging;
     } 
-    else if(currentCharacter == '\r'){
+    else if(currentCharacter == '\n' || currentCharacter == '\r'){
         me->callbackFn(me->parsedCommand);
         me->currentState = AT_Reset;
     } 
@@ -121,6 +126,23 @@ void AT_DataParse(ATCommandParser *me, ATCharacter currentCharacter){
 }
 
 void AT_DataParseNumber(ATCommandParser *me, ATCharacter currentCharacter){
+   AT_DataParseNumberHelper(me, currentCharacter, false);
+}
+
+void AT_DataParseNegativeNumber(ATCommandParser *me, ATCharacter currentCharacter){
+       AT_DataParseNumberHelper(me, currentCharacter, true); 
+}
+
+void AT_DataParseNegativeNumberStaging(ATCommandParser* me, ATCharacter currentCharacter){
+    if((currentCharacter >= '0' && currentCharacter <= '9')){
+        me->currentState = AT_DataParseNegativeNumber;
+    }
+    else{
+        me->currentState = AT_Error;
+    }
+}
+
+void AT_DataParseNumberHelper(ATCommandParser *me, ATCharacter currentCharacter, bool negative){
     if((currentCharacter >= '0' && currentCharacter <= '9')){
         me->buffer[me->bufferIndex] = currentCharacter;
         me->bufferIndex++;
@@ -128,14 +150,14 @@ void AT_DataParseNumber(ATCommandParser *me, ATCharacter currentCharacter){
             me->currentState = AT_Error;
         }
     } 
-    else if(currentCharacter == '\r'){
-        me->parsedCommand->data[me->parsedCommand->dataIndex] = atoi(me->buffer);
+    else if(currentCharacter == '\n' || currentCharacter == '\r'){
+        me->parsedCommand->data[me->parsedCommand->dataIndex] = negative ? -atoi(me->buffer) : atoi(me->buffer);
         me->parsedCommand->dataIndex++;
         me->callbackFn(me->parsedCommand);
         me->currentState = AT_Reset;
     } 
     else if(currentCharacter == ','){
-        me->parsedCommand->data[me->parsedCommand->dataIndex] = atoi(me->buffer);
+        me->parsedCommand->data[me->parsedCommand->dataIndex] = negative ? -atoi(me->buffer) : atoi(me->buffer);
         me->parsedCommand->dataIndex++;
         AT_CleanBuffer(me);
         me->currentState = AT_DataParse;
@@ -152,7 +174,7 @@ void AT_Error(ATCommandParser *me, ATCharacter currentCharacter){
 }
 
 void AT_Reset(ATCommandParser *me, ATCharacter currentCharacter){
-    if(currentCharacter == '\n'){
+    if(currentCharacter == '\n' || currentCharacter == '\r'){
         AT_CleanBuffer(me);
         AT_CleanCommand(me->parsedCommand);    
         me->currentState = AT_Idle;
