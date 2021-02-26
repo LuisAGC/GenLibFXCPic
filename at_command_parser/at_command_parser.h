@@ -46,8 +46,6 @@ extern "C" {
     void AT_CommandModifierParse(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_DataParse(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_DataParseNumber(ATCommandParser *me, ATCharacter currentCharacter);
-    void AT_DataParseNegativeNumber(ATCommandParser *me, ATCharacter currentCharacter);
-    void AT_DataParseNegativeNumberStaging(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_Error(ATCommandParser *me, ATCharacter currentCharacter);
     void AT_Reset(ATCommandParser *me, ATCharacter currentCharacter);
 
