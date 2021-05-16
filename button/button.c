@@ -35,19 +35,25 @@ extern "C" {
     }
 
     void Button_ShortPress(Button *me){
-        me->buttonShortPressCallbackFn();
+        if(me->buttonShortPressCallbackFn){
+            me->buttonShortPressCallbackFn();
+        }
         me->currentStateFn = Button_Reset;
     }
 
     void Button_LongPress(Button *me){
-        me->buttonLongPressCallbackFn();
+        if(me->buttonLongPressCallbackFn){
+            me->buttonLongPressCallbackFn();
+        }
         me->currentStateFn = Button_Reset;
     }
 
     void Button_Reset(Button *me){
         if(me->getButtonPhysicalStateCallbackFn() == false){
             me->currentTicks = 0;
-            me->buttonReleasedCallbackFn();
+            if (me->buttonReleasedCallbackFn){
+                me->buttonReleasedCallbackFn();
+            }
             me->currentStateFn = Button_Idle;
         }
     }
