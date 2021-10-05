@@ -9,7 +9,7 @@ extern "C" {
 #endif /* __cplusplus */
     
     #ifndef KEYPAD_TYPE
-    #define KEYPAD_TYPE int8_t
+    #define KEYPAD_TYPE uint8_t
     #endif
     
     // Forward declaration of the struct type

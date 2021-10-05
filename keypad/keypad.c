@@ -6,9 +6,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
-    void Keypad_Scan(Keypad *me){
+    void Keypad_Idle(Keypad *me){
         KEYPAD_TYPE keyPressed = me->getKeypadPhysicalStateFn();
-        if(keyPressed > -1){
+        if(keyPressed > 0){
             me->currentStateFn = Keypad_Pressed_Unstable;
             me->lastKeyPressed = keyPressed;
         }
@@ -18,7 +18,7 @@ extern "C" {
         me->currentTicks++;
         if(me->getKeypadPhysicalStateFn() != me->lastKeyPressed){
             me->currentTicks = 0;
-            me->currentStateFn = Keypad_Scan;
+            me->currentStateFn = Keypad_Idle;
         }
         if(me->currentTicks > me->stabilizationTicks){
             me->currentTicks = 0;
@@ -32,10 +32,10 @@ extern "C" {
     }
 
     void Keypad_Reset(Keypad *me){
-        if(me->getKeypadPhysicalStateFn() == -1){
+        if(me->getKeypadPhysicalStateFn() == 0){
             me->currentTicks = 0;
-            me->lastKeyPressed = -1;
-            me->currentStateFn = Keypad_Scan;
+            me->lastKeyPressed = 0;
+            me->currentStateFn = Keypad_Idle;
         }
     }
 
