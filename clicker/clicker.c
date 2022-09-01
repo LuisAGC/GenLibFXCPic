@@ -39,9 +39,12 @@ extern "C" {
     }
 
     void Clicker_TripleClick(Clicker *me, ClickerExternalEvent event){
-        me->tripleClickCallback();
-        me->currentTicks = 0;
-        me->currentStateFn = Clicker_Idle;
+        me->currentTicks++;
+        if(me->currentTicks > me->toleranceTicks){
+            me->tripleClickCallback();
+            me->currentTicks = 0;
+            me->currentStateFn = Clicker_Idle;
+        }
     }
 
     void Clicker_Ticker(Clicker *me, ClickerExternalEvent event){
